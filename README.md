@@ -3,7 +3,7 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/Zannnol/godot-asset-showroom/build.yml?branch=main&style=flat-square)](https://github.com/Zannnol/godot-asset-showroom/actions)
 [![Latest Release](https://img.shields.io/github/v/release/Zannnol/godot-asset-showroom?style=flat-square)](https://github.com/Zannnol/godot-asset-showroom/releases/latest)
 [![Godot Engine](https://img.shields.io/badge/Godot-4.x-blue?style=flat-square&logo=godotengine&logoColor=white)](https://godotengine.org)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey?style=flat-square)](https://github.com/Zannnol/godot-asset-showroom/releases/latest)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20MacOS-lightgrey?style=flat-square)](https://github.com/Zannnol/godot-asset-showroom/releases/latest)
 [![License](https://img.shields.io/github/license/Zannnol/godot-asset-showroom?style=flat-square)](LICENSE)
 
 An internal desktop utility built with Godot 4 designed for 3D artists and technical artists. It provides a standalone, portable environment to quickly load, inspect, and evaluate 3D models, materials, and post-processing shaders without requiring any knowledge of the Godot Engine interface.
