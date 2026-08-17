@@ -1,0 +1,19 @@
+# Godot 4+ specific ignores
+.godot/
+
+# Builds and exports
+/builds/
+/exports/
+*.exe
+*.pck
+*.dmg
+*.apk
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Mono / C#
+.mono/
+*.csproj
+*.sln

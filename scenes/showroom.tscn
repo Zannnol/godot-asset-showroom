@@ -1,0 +1,133 @@
+[gd_scene format=3 uid="uid://dmghnvhvvw8xs"]
+
+[ext_resource type="Script" uid="uid://w7uau05ojhne" path="res://scripts/components/showroom.gd" id="1_88u07"]
+[ext_resource type="Script" uid="uid://cpukuurrulget" path="res://scripts/components/orbit_camera.gd" id="1_diier"]
+[ext_resource type="Texture2D" uid="uid://k5dlrc1s0n5q" path="res://assets/hdri/ferndale_studio_07_4k.hdr" id="2_bf5ds"]
+[ext_resource type="PackedScene" uid="uid://betxnsrb6wi" path="res://assets/meshes/suzanne.glb" id="3_8oebu"]
+[ext_resource type="Shader" uid="uid://dduydtn2u3nn7" path="res://shaders/drafts/eugene_carriere.gdshader" id="5_6xq5c"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_6xq5c"]
+panorama = ExtResource("2_bf5ds")
+
+[sub_resource type="Sky" id="Sky_cqexp"]
+sky_material = SubResource("PanoramaSkyMaterial_6xq5c")
+
+[sub_resource type="Environment" id="Environment_bf5ds"]
+background_mode = 1
+background_color = Color(0.20152658, 0.20152658, 0.20152658, 1)
+sky = SubResource("Sky_cqexp")
+ambient_light_source = 3
+reflected_light_source = 2
+tonemap_mode = 3
+
+[sub_resource type="SphereMesh" id="SphereMesh_3eqgx"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cqexp"]
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 7.51
+
+[sub_resource type="BoxMesh" id="BoxMesh_jiotg"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6xq5c"]
+albedo_color = Color(0.6845964, 0.23563552, 9.62615e-08, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5xnya"]
+albedo_color = Color(0, 0.46920913, 0.9000289, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wvyit"]
+albedo_color = Color(0.25989917, 0.60164756, 0, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_slvsa"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_88u07"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8oebu"]
+metallic = 1.0
+roughness = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bf5ds"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cqexp"]
+shader = ExtResource("5_6xq5c")
+shader_parameter/shadow_color = Color(0.08, 0.06, 0.05, 1)
+shader_parameter/highlight_color = Color(0.85, 0.78, 0.68, 1)
+shader_parameter/tint_strength = 0.846000040185
+shader_parameter/shadow_threshold = 0.4510000214225
+shader_parameter/highlight_threshold = 0.934000020615
+shader_parameter/brush_intensity = 0.0010000000475
+shader_parameter/brush_scale = 35.2750014380625
+shader_parameter/sfumato_softness = 0.84800004028
+shader_parameter/canvas_grain = 0.05600000266
+
+[node name="Showroom" type="Node3D" unique_id=1250752923 node_paths=PackedStringArray("target_parent")]
+script = ExtResource("1_88u07")
+target_parent = NodePath("Targets")
+
+[node name="Environment" type="Node3D" parent="." unique_id=1010949643]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=1534344620]
+environment = SubResource("Environment_bf5ds")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment" unique_id=766435213]
+transform = Transform3D(0.7071068, 0.5, -0.5, 0, 0.7071068, 0.7071068, 0.7071068, -0.5, 0.5, 0, 4.47696, 0)
+shadow_enabled = true
+
+[node name="CameraPivot" type="Node3D" parent="." unique_id=1833562368]
+script = ExtResource("1_diier")
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot" unique_id=2044764505]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 3.5)
+
+[node name="Targets" type="Node3D" parent="." unique_id=39789249]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Targets" unique_id=1702651920]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)
+mesh = SubResource("SphereMesh_3eqgx")
+surface_material_override/0 = SubResource("StandardMaterial3D_cqexp")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Targets" unique_id=502713689]
+mesh = SubResource("BoxMesh_jiotg")
+surface_material_override/0 = SubResource("StandardMaterial3D_6xq5c")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Targets" unique_id=973449446]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.7123394, 0)
+mesh = SubResource("BoxMesh_jiotg")
+surface_material_override/0 = SubResource("StandardMaterial3D_5xnya")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="Targets" unique_id=1941766644]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3420395, 0)
+mesh = SubResource("BoxMesh_jiotg")
+surface_material_override/0 = SubResource("StandardMaterial3D_wvyit")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Targets" unique_id=674094694]
+transform = Transform3D(0.5, 0, 0, 0, -2.1855694e-08, -0.5, 0, 0.5, -2.1855694e-08, 1.5, 0, 0)
+mesh = SubResource("PlaneMesh_slvsa")
+
+[node name="suzanne" parent="Targets" unique_id=125741798 instance=ExtResource("3_8oebu")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 0, 0)
+
+[node name="References" type="Node3D" parent="." unique_id=50567700]
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="References" unique_id=1210811403]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -3, 0, 0)
+mesh = SubResource("SphereMesh_88u07")
+surface_material_override/0 = SubResource("StandardMaterial3D_8oebu")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="References" unique_id=752746782]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -2.5, 0, 0)
+mesh = SubResource("SphereMesh_88u07")
+surface_material_override/0 = SubResource("StandardMaterial3D_bf5ds")
+
+[node name="PostProcessLayer" type="CanvasLayer" parent="." unique_id=1977306721]
+follow_viewport_enabled = true
+
+[node name="ColorRect" type="ColorRect" parent="PostProcessLayer" unique_id=418115528]
+material = SubResource("ShaderMaterial_cqexp")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[editable path="Targets/suzanne"]
