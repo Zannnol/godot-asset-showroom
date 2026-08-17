@@ -14,7 +14,7 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: Setup builds directory and .gdignore
         run: |
@@ -32,11 +32,10 @@ jobs:
           use_preset_export_path: true
 
       - name: Upload Release Assets
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.10.0
         with:
           files: |
-            builds/Windows.zip
-            builds/Linux.zip
-            builds/macOS.zip
+            builds/**/*.zip
+          failed_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
