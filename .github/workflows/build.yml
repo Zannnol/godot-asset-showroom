@@ -16,6 +16,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Ignore build folder in Godot
+        run: |
+          mkdir -p build
+          touch build/.gdignore
+
       - name: Setup & Export with Godot 4.6.1
         uses: firebelley/godot-export@v6.0.0
         with:
