@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://k5dlrc1s0n5q"
 path.bptc="res://.godot/imported/ferndale_studio_07_4k.hdr-e9dad4ad650d5424f1ee73602bea5ea9.bptc.ctex"
+path.astc="res://.godot/imported/ferndale_studio_07_4k.hdr-e9dad4ad650d5424f1ee73602bea5ea9.astc.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/hdri/ferndale_studio_07_4k.hdr"
-dest_files=["res://.godot/imported/ferndale_studio_07_4k.hdr-e9dad4ad650d5424f1ee73602bea5ea9.bptc.ctex"]
+dest_files=["res://.godot/imported/ferndale_studio_07_4k.hdr-e9dad4ad650d5424f1ee73602bea5ea9.bptc.ctex", "res://.godot/imported/ferndale_studio_07_4k.hdr-e9dad4ad650d5424f1ee73602bea5ea9.astc.ctex"]
 
 [params]
 
