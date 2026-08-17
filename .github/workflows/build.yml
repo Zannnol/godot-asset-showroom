@@ -16,10 +16,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Ignore build folder in Godot
+      - name: Setup builds directory and .gdignore
         run: |
-          mkdir -p build
-          touch build/.gdignore
+          mkdir -p builds
+          touch builds/.gdignore
+          touch .gdignore
 
       - name: Setup & Export with Godot 4.6.1
         uses: firebelley/godot-export@v6.0.0
@@ -28,13 +29,14 @@ jobs:
           godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_export_templates.tpz
           relative_project_path: './'
           archive_output: true
+          use_preset_export_path: true
 
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            build/Windows.zip
-            build/Linux.zip
-            build/macOS.zip
+            builds/Windows.zip
+            builds/Linux.zip
+            builds/macOS.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
