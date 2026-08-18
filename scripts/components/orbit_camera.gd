@@ -1,24 +1,61 @@
-extends Node3D
+extends Camera3D
 
-@export var sensitivity: float = 0.005
-@export var zoom_speed: float = 0.3
-@export var min_zoom: float = 1.0
-@export var max_zoom: float = 8.0
+@export var target_path: NodePath = "../Stage/AssetPivot"
+@export_group("Limits")
+@export var min_distance: float = 0.8
+@export var max_distance: float = 10.0
+@export var min_pitch: float = -80.0
+@export var max_pitch: float = 80.0
 
-@onready var camera: Camera3D = $Camera3D
+@export_group("Sensitivity")
+@export var orbit_sensitivity: float = 0.25
+@export var zoom_sensitivity: float = 0.5
+@export var pan_sensitivity: float = 0.003
 
-var _is_rotating: bool = false
+var _target: Node3D
+var _distance: float = 3.5
+var _yaw: float = 0.0
+var _pitch: float = -15.0
+var _is_orbiting: bool = false
+var _is_panning: bool = false
+
+func _ready() -> void:
+	if has_node(target_path):
+		_target = get_node(target_path)
+	_update_camera_position()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_RIGHT:
-			_is_rotating = event.pressed
+			_is_orbiting = event.pressed
+		elif event.button_index == MOUSE_BUTTON_MIDDLE:
+			_is_panning = event.pressed
 		elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			camera.position.z = clamp(camera.position.z - zoom_speed, min_zoom, max_zoom)
+			_distance = clamp(_distance - zoom_sensitivity, min_distance, max_distance)
+			_update_camera_position()
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			camera.position.z = clamp(camera.position.z + zoom_speed, min_zoom, max_zoom)
+			_distance = clamp(_distance + zoom_sensitivity, min_distance, max_distance)
+			_update_camera_position()
 
-	if event is InputEventMouseMotion and _is_rotating:
-		rotate_y(-event.relative.x * sensitivity)
-		var new_rot_x = rotation.x - event.relative.y * sensitivity
-		rotation.x = clamp(new_rot_x, deg_to_rad(-80), deg_to_rad(80))
+	elif event is InputEventMouseMotion:
+		if _is_orbiting:
+			_yaw -= event.relative.x * orbit_sensitivity
+			_pitch = clamp(_pitch - event.relative.y * orbit_sensitivity, min_pitch, max_pitch)
+			_update_camera_position()
+		elif _is_panning and _target:
+			var right := global_transform.basis.x
+			var up := global_transform.basis.y
+			_target.global_position -= (right * event.relative.x - up * event.relative.y) * pan_sensitivity * _distance
+			_update_camera_position()
+
+func _update_camera_position() -> void:
+	if not _target:
+		return
+	
+	var rot_yaw := Quaternion(Vector3.UP, deg_to_rad(_yaw))
+	var rot_pitch := Quaternion(Vector3.RIGHT, deg_to_rad(_pitch))
+	var combined_rot := rot_yaw * rot_pitch
+	
+	var offset := combined_rot * Vector3(0, 0, _distance)
+	global_position = _target.global_position + offset
+	look_at(_target.global_position, Vector3.UP)

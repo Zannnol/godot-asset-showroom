@@ -1,0 +1,80 @@
+[gd_scene format=3 uid="uid://bdipg2ahey2k6"]
+
+[ext_resource type="Texture2D" uid="uid://k5dlrc1s0n5q" path="res://assets/hdri/ferndale_studio_07_4k.hdr" id="1_7of6v"]
+[ext_resource type="Script" uid="uid://cpukuurrulget" path="res://scripts/components/orbit_camera.gd" id="2_2svhk"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_2svhk"]
+panorama = ExtResource("1_7of6v")
+
+[sub_resource type="Sky" id="Sky_q7tv1"]
+sky_material = SubResource("PanoramaSkyMaterial_2svhk")
+
+[sub_resource type="Environment" id="Environment_khcb3"]
+background_mode = 1
+background_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+sky = SubResource("Sky_q7tv1")
+ambient_light_source = 3
+reflected_light_source = 2
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7of6v"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2svhk"]
+albedo_color = Color(0.20152658, 0.20152658, 0.20152658, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_7of6v"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q7tv1"]
+metallic = 1.0
+roughness = 0.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_khcb3"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7h1gp"]
+albedo_color = Color(0.18, 0.18, 0.18, 1)
+roughness = 0.5
+
+[node name="MainShowroom" type="Node3D" unique_id=1825966714]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=923583119]
+environment = SubResource("Environment_khcb3")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1498186761]
+transform = Transform3D(0.81915206, 0.4055798, -0.4055798, 0, 0.70710677, 0.70710677, 0.57357645, -0.579228, 0.579228, 0, 3, 0)
+light_energy = 1.5
+shadow_enabled = true
+
+[node name="Stage" type="Node3D" parent="." unique_id=1930391981]
+
+[node name="Pedestal" type="MeshInstance3D" parent="Stage" unique_id=13950988]
+transform = Transform3D(2, 0, 0, 0, 0.1, 0, 0, 0, 2, 0, 0, 0)
+mesh = SubResource("CylinderMesh_7of6v")
+surface_material_override/0 = SubResource("StandardMaterial3D_2svhk")
+
+[node name="AssetPivot" type="Marker3D" parent="Stage" unique_id=884458130]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="ReferenceSpheres" type="Node3D" parent="." unique_id=1897068578]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3, 0.15, -0.3)
+
+[node name="ChromeSphere" type="MeshInstance3D" parent="ReferenceSpheres" unique_id=635422511]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -0.28315687, 0, 0)
+mesh = SubResource("SphereMesh_7of6v")
+surface_material_override/0 = SubResource("StandardMaterial3D_q7tv1")
+
+[node name="GreySphere" type="MeshInstance3D" parent="ReferenceSpheres" unique_id=854804569]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+mesh = SubResource("SphereMesh_khcb3")
+surface_material_override/0 = SubResource("StandardMaterial3D_7h1gp")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=362551001]
+transform = Transform3D(1, 0, 0, 0, 0.9659258, 0.25881904, 0, -0.25881904, 0.9659258, 0, 1.5, 3.5)
+fov = 45.0
+script = ExtResource("2_2svhk")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=240903932]
+
+[node name="UI_Overlay" type="Control" parent="UI" unique_id=148958849]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
