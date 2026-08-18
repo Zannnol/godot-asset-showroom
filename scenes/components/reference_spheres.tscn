@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://c75wlmbdpjaur"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_7of6v"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q7tv1"]
+metallic = 1.0
+roughness = 0.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_khcb3"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7h1gp"]
+albedo_color = Color(0.18, 0.18, 0.18, 1)
+roughness = 0.5
+
+[node name="ReferenceSpheres" type="Node3D" unique_id=1851797313]
+
+[node name="ChromeSphere" type="MeshInstance3D" parent="." unique_id=1199472086]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -0.28315687, 0, 0)
+mesh = SubResource("SphereMesh_7of6v")
+surface_material_override/0 = SubResource("StandardMaterial3D_q7tv1")
+
+[node name="GreySphere" type="MeshInstance3D" parent="." unique_id=1213940141]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+mesh = SubResource("SphereMesh_khcb3")
+surface_material_override/0 = SubResource("StandardMaterial3D_7h1gp")

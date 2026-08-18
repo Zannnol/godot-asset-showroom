@@ -1,0 +1,146 @@
+[gd_scene format=3 uid="uid://08mrtm1jdoir"]
+
+[ext_resource type="Script" uid="uid://c7jldfkre71se" path="res://scripts/ui/ui_overlay.gd" id="1_up335"]
+[ext_resource type="StyleBox" uid="uid://dp3hcqpdviwo7" path="res://ui/themes/interface_theme.tres" id="2_gxkro"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rx6hd"]
+content_margin_left = 15.0
+content_margin_top = 15.0
+content_margin_right = 15.0
+content_margin_bottom = 15.0
+bg_color = Color(0.09411765, 0.09411765, 0.10980392, 0.78431374)
+corner_radius_top_left = 10
+corner_radius_bottom_left = 10
+
+[node name="UI_Overlay" type="Control" unique_id=1555027313]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_up335")
+
+[node name="Sidebar" type="PanelContainer" parent="." unique_id=1525670608]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 249.0
+grow_vertical = 2
+theme_override_styles/panel = ExtResource("2_gxkro")
+
+[node name="Content" type="VBoxContainer" parent="Sidebar" unique_id=1374661853]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Sidebar/Content" unique_id=503649148]
+layout_mode = 2
+text = "Studio Controls"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Sidebar/Content" unique_id=1623684726]
+layout_mode = 2
+
+[node name="Section1" type="Label" parent="Sidebar/Content" unique_id=921569451]
+layout_mode = 2
+text = "Visibility"
+horizontal_alignment = 1
+
+[node name="CheckPedestal" type="CheckBox" parent="Sidebar/Content" unique_id=187968080]
+layout_mode = 2
+button_pressed = true
+text = "Show Pedestal"
+
+[node name="CheckSpheres" type="CheckBox" parent="Sidebar/Content" unique_id=902662259]
+layout_mode = 2
+button_pressed = true
+text = "Show Reference Spheres"
+
+[node name="HSeparator2" type="HSeparator" parent="Sidebar/Content" unique_id=1538961981]
+layout_mode = 2
+
+[node name="Section2" type="Label" parent="Sidebar/Content" unique_id=710271378]
+layout_mode = 2
+text = "Environment & HDRI"
+horizontal_alignment = 1
+
+[node name="LabelHDRI" type="Label" parent="Sidebar/Content" unique_id=1490628979]
+layout_mode = 2
+text = "HDRI Energy: 1.0"
+
+[node name="SliderHDRI" type="HSlider" parent="Sidebar/Content" unique_id=1343779757]
+layout_mode = 2
+max_value = 3.0
+step = 0.1
+value = 1.0
+
+[node name="HSeparator3" type="HSeparator" parent="Sidebar/Content" unique_id=25136106]
+layout_mode = 2
+
+[node name="Section3" type="Label" parent="Sidebar/Content" unique_id=153883563]
+layout_mode = 2
+text = "Directional Light"
+horizontal_alignment = 1
+
+[node name="LabelLightEnergy" type="Label" parent="Sidebar/Content" unique_id=262104010]
+layout_mode = 2
+text = "Light Energy: 1.5"
+
+[node name="SliderLightEnergy" type="HSlider" parent="Sidebar/Content" unique_id=807072739]
+layout_mode = 2
+max_value = 5.0
+step = 0.1
+value = 1.5
+
+[node name="LabelLightTemp" type="Label" parent="Sidebar/Content" unique_id=1498964734]
+layout_mode = 2
+text = "Color Temperature: 6500 K"
+
+[node name="SliderLightTemp" type="HSlider" parent="Sidebar/Content" unique_id=1090944077]
+layout_mode = 2
+min_value = 1000.0
+max_value = 40000.0
+step = 100.0
+value = 6500.0
+
+[node name="StatsPanel" type="PanelContainer" parent="." unique_id=820522577]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_rx6hd")
+
+[node name="Content" type="VBoxContainer" parent="StatsPanel" unique_id=1934727808]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="StatsPanel/Content" unique_id=1167400012]
+layout_mode = 2
+text = "Asset Info"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="StatsPanel/Content" unique_id=1784188339]
+layout_mode = 2
+
+[node name="LabelName" type="Label" parent="StatsPanel/Content" unique_id=1748998639]
+layout_mode = 2
+text = "Name: None"
+
+[node name="LabelTriangles" type="Label" parent="StatsPanel/Content" unique_id=377607783]
+layout_mode = 2
+text = "Triangles: 0"
+
+[node name="LabelVertices" type="Label" parent="StatsPanel/Content" unique_id=452019754]
+layout_mode = 2
+text = "Vertices: 0"
+
+[node name="LabelSurfaces" type="Label" parent="StatsPanel/Content" unique_id=1429317044]
+layout_mode = 2
+text = "Surfaces: 0"
+
+[node name="LabelDimensions" type="Label" parent="StatsPanel/Content" unique_id=474189295]
+layout_mode = 2
+text = "Size: 0 x 0 x 0 m"
