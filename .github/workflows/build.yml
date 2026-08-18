@@ -14,7 +14,7 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v6
 
       - name: Setup builds directory and .gdignore
         run: |
@@ -23,7 +23,7 @@ jobs:
           touch .gdignore
 
       - name: Setup & Export with Godot 4.6.1
-        uses: firebelley/godot-export@v6.0.0
+        uses: firebelley/godot-export@v6
         with:
           godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_linux.x86_64.zip
           godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_export_templates.tpz
@@ -32,7 +32,7 @@ jobs:
           use_preset_export_path: true
 
       - name: Upload Release Assets
-        uses: softprops/action-gh-release@v2.10.0
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             builds/**/*.zip
