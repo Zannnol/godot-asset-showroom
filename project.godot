@@ -12,6 +12,7 @@ config_version=5
 
 config/name="TheDiscordingTales-Showroom"
 config/description="An internal desktop utility built with Godot 4 designed for 3D artists and technical artists. It provides a standalone, portable environment to quickly load, inspect, and evaluate 3D models, materials, and post-processing shaders without requiring any knowledge of the Godot Engine interface."
+run/main_scene="uid://dmghnvhvvw8xs"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="uid://cjsvkwrfjdpkq"
 

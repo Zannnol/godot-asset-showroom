@@ -1,10 +1,10 @@
 # Godot Asset & Shader Showroom
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/Zannnol/godot-asset-showroom/build.yml?branch=main&style=flat-square)](https://github.com/Zannnol/godot-asset-showroom/actions)
-[![Latest Release](https://img.shields.io/github/v/release/Zannnol/godot-asset-showroom?style=flat-square)](https://github.com/Zannnol/godot-asset-showroom/releases/latest)
-[![Godot Engine](https://img.shields.io/badge/Godot-4.x-blue?style=flat-square&logo=godotengine&logoColor=white)](https://godotengine.org)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20MacOS-lightgrey?style=flat-square)](https://github.com/Zannnol/godot-asset-showroom/releases/latest)
-[![License](https://img.shields.io/github/license/Zannnol/godot-asset-showroom?style=flat-square)](LICENSE)
+[![Build Status](https://github.com/Zannnol/godot-asset-showroom/actions/workflows/build.yml/badge.svg)](https://github.com/Zannnol/godot-asset-showroom/actions)
+[![Latest Release](https://img.shields.io/github/v/release/Zannnol/godot-asset-showroom)](https://github.com/Zannnol/godot-asset-showroom/releases/latest)
+![Godot Engine](https://img.shields.io/badge/Godot-4.6.1--stable-478cbf?logo=godotengine&logoColor=white)
+![Platforms](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)
+[![License](https://img.shields.io/github/license/Zannnol/godot-asset-showroom)](LICENSE)
 
 An internal desktop utility built with Godot 4 designed for 3D artists and technical artists. It provides a standalone, portable environment to quickly load, inspect, and evaluate 3D models, materials, and post-processing shaders without requiring any knowledge of the Godot Engine interface.
 
@@ -23,7 +23,7 @@ An internal desktop utility built with Godot 4 designed for 3D artists and techn
 1. Go to the **Releases** section on the right side of this repository.
 2. Download the latest `Showroom-vX.X.X.zip` archive for your platform.
 3. Extract the contents to any directory.
-4. Launch `Showroom.exe` (or the corresponding executable for Linux).
+4. Launch `Showroom.exe` (or the corresponding executable for Linux and macOS).
 
 ---
 
@@ -34,8 +34,12 @@ An internal desktop utility built with Godot 4 designed for 3D artists and techn
 - [x] Studio environment lighting setup (HDRI skybox and key directional light)
 - [x] Real-time post-processing layer
 - [x] Material reference standards (roughness/metallic calibration spheres)
+- [x] Windows portable builds
 
 ### In Development / Planned
+- [ ] Linux portable builds
+- [ ] MacOS portable builds
+- [ ] Web version
 - [ ] Runtime mesh and material importer (glTF 2.0 / OBJ drag-and-drop support)
 - [ ] Comprehensive UI suite for environment and shader parameters
 - [ ] Real-time shader hot-reloading and dynamic parameter inspector
