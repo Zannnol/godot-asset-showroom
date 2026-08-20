@@ -3,12 +3,16 @@
 [sub_resource type="SphereMesh" id="SphereMesh_7of6v"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q7tv1"]
+render_priority = 1
+no_depth_test = true
 metallic = 1.0
 roughness = 0.0
 
 [sub_resource type="SphereMesh" id="SphereMesh_khcb3"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7h1gp"]
+render_priority = 1
+no_depth_test = true
 albedo_color = Color(0.18, 0.18, 0.18, 1)
 roughness = 0.5
 

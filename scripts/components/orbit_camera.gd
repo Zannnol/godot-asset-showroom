@@ -2,8 +2,8 @@ extends Camera3D
 
 @export var target_path: NodePath = "../Stage/AssetPivot"
 @export_group("Limits")
-@export var min_distance: float = 0.8
-@export var max_distance: float = 10.0
+@export var min_distance: float = 0.5
+@export var max_distance: float = 20.0
 @export var min_pitch: float = -80.0
 @export var max_pitch: float = 80.0
 
@@ -13,9 +13,10 @@ extends Camera3D
 @export var pan_sensitivity: float = 0.003
 
 var _target: Node3D
-var _distance: float = 3.5
+var _distance: float = 6.5
 var _yaw: float = 0.0
-var _pitch: float = -15.0
+var _pitch: float = -10.0
+var _focus_offset: Vector3 = Vector3.ZERO
 var _is_orbiting: bool = false
 var _is_panning: bool = false
 
@@ -45,17 +46,27 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif _is_panning and _target:
 			var right := global_transform.basis.x
 			var up := global_transform.basis.y
-			_target.global_position -= (right * event.relative.x - up * event.relative.y) * pan_sensitivity * _distance
+			# Shift the camera's viewpoint rather than moving the 3D node
+			_focus_offset -= (right * event.relative.x - up * event.relative.y) * pan_sensitivity * _distance
 			_update_camera_position()
+
+## Adjusts the camera's focus point and distance (called during import)
+func focus_on(focus_point: Vector3, new_distance: float = -1.0) -> void:
+	_focus_offset = focus_point
+	if new_distance > 0.0:
+		_distance = clamp(new_distance, min_distance, max_distance)
+	_update_camera_position()
 
 func _update_camera_position() -> void:
 	if not _target:
 		return
 	
+	# The camera is aimed at the pivot point plus the user offset
+	var target_center := _target.global_position + _focus_offset
 	var rot_yaw := Quaternion(Vector3.UP, deg_to_rad(_yaw))
 	var rot_pitch := Quaternion(Vector3.RIGHT, deg_to_rad(_pitch))
 	var combined_rot := rot_yaw * rot_pitch
 	
 	var offset := combined_rot * Vector3(0, 0, _distance)
-	global_position = _target.global_position + offset
-	look_at(_target.global_position, Vector3.UP)
+	global_position = target_center + offset
+	look_at(target_center, Vector3.UP)

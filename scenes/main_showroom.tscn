@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://bdipg2ahey2k6"]
 
+[ext_resource type="Script" uid="uid://2li4da1j2jp6" path="res://scripts/main_showroom.gd" id="1_7h1gp"]
 [ext_resource type="Texture2D" uid="uid://k5dlrc1s0n5q" path="res://assets/hdri/ferndale_studio_07_4k.hdr" id="1_7of6v"]
 [ext_resource type="Script" uid="uid://cpukuurrulget" path="res://scripts/components/orbit_camera.gd" id="2_2svhk"]
 [ext_resource type="PackedScene" uid="uid://c75wlmbdpjaur" path="res://scenes/components/reference_spheres.tscn" id="2_khcb3"]
@@ -23,9 +24,11 @@ reflected_light_source = 2
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2svhk"]
 albedo_color = Color(0.20152658, 0.20152658, 0.20152658, 1)
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_khcb3"]
-
-[node name="MainShowroom" type="Node3D" unique_id=1825966714]
+[node name="MainShowroom" type="Node3D" unique_id=1825966714 node_paths=PackedStringArray("asset_pivot", "ui_overlay", "camera_3d")]
+script = ExtResource("1_7h1gp")
+asset_pivot = NodePath("Stage/AssetPivot")
+ui_overlay = NodePath("UI/UI_Overlay")
+camera_3d = NodePath("Camera3D")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=923583119]
 environment = SubResource("Environment_khcb3")
@@ -38,30 +41,26 @@ shadow_enabled = true
 [node name="Stage" type="Node3D" parent="." unique_id=1930391981]
 
 [node name="Pedestal" type="MeshInstance3D" parent="Stage" unique_id=13950988]
-transform = Transform3D(2, 0, 0, 0, 0.1, 0, 0, 0, 2, 0, 0, 0)
+transform = Transform3D(1.75, 0, 0, 0, 0.05, 0, 0, 0, 1.75, 0, 0, 0)
 mesh = SubResource("CylinderMesh_7of6v")
 surface_material_override/0 = SubResource("StandardMaterial3D_2svhk")
 
 [node name="AssetPivot" type="Marker3D" parent="Stage" unique_id=884458130]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 
-[node name="Capsule" type="MeshInstance3D" parent="Stage/AssetPivot" unique_id=1657477314]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0000558, 0)
-mesh = SubResource("CapsuleMesh_khcb3")
-
-[node name="ReferenceSpheres" parent="." unique_id=1851797313 instance=ExtResource("2_khcb3")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3, 0.15, -0.3)
-
 [node name="Camera3D" type="Camera3D" parent="." unique_id=362551001]
-transform = Transform3D(1, 0, 0, 0, 0.9659258, 0.25881904, 0, -0.25881904, 0.9659258, 0, 1.5, 3.5)
+transform = Transform3D(1, 0, 0, 0, 0.98480767, 0.17364816, 0, -0.17364816, 0.98480767, 0, 1.8, 6.5)
 fov = 45.0
 script = ExtResource("2_2svhk")
+
+[node name="ReferenceSpheres" parent="Camera3D" unique_id=1851797313 instance=ExtResource("2_khcb3")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 1.1, -0.65, -2)
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=240903932]
 
 [node name="UI_Overlay" parent="UI" unique_id=1555027313 node_paths=PackedStringArray("pedestal", "asset_pivot", "reference_spheres", "world_environment", "directional_light") instance=ExtResource("3_q7tv1")]
 pedestal = NodePath("../../Stage/Pedestal")
 asset_pivot = NodePath("../../Stage/AssetPivot")
-reference_spheres = NodePath("../../ReferenceSpheres")
+reference_spheres = NodePath("../../Camera3D/ReferenceSpheres")
 world_environment = NodePath("../../WorldEnvironment")
 directional_light = NodePath("../../DirectionalLight3D")

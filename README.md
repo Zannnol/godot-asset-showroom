@@ -35,15 +35,20 @@ An internal desktop utility built with Godot 4 designed for 3D artists and techn
 - [x] Real-time post-processing layer
 - [x] Material reference standards (roughness/metallic calibration spheres)
 - [x] Windows portable builds
+- [x] Linux portable builds   > Build but not tested
+- [x] MacOS portable builds   > Build but not tested
+- [x] Runtime mesh and material importer (glTF 2.0) with drap-and-drop support
 
 ### In Development / Planned
-- [ ] Linux portable builds
-- [ ] MacOS portable builds
+
 - [ ] Web version
-- [ ] Runtime mesh and material importer (glTF 2.0 / OBJ drag-and-drop support)
 - [ ] Comprehensive UI suite for environment and shader parameters
 - [ ] Real-time shader hot-reloading and dynamic parameter inspector
 - [ ] Custom HDRI environment switching from local files
+- [ ] Custom HDRI rotation
+- [ ] Custom light direction and rotation
+- [ ] Reset vue to the center
+- [ ] Custom background color
 - [ ] Screenshot and turntable animation export module
 
 ---
