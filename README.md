@@ -52,9 +52,9 @@ For detailed user guides, technical architecture details, and troubleshooting, v
 - [x] Windows portable builds
 - [x] Linux portable builds *(Built, pending testing)*
 - [x] macOS portable builds *(Built, pending testing)*
+- [x] OBJ importer support (`#12`)
 
 ### In Development / Planned
-- [ ] OBJ importer support (`#12`)
 - [ ] UV & Surface inspection views (`#9`, `#11`)
 - [ ] Custom HDRI switching and rotation (`#15`, `#19`)
 - [ ] Custom light direction / rotation (`#20`)
