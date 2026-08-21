@@ -1,7 +1,7 @@
 class_name AssetImporter
 extends RefCounted
 
-## Loads a 3D file (.glb / .gltf) at runtime and centers it on its base
+## Loads a 3D file (.glb / .gltf / .obj) at runtime and centers it on its base
 static func import_from_path(path: String) -> Node3D:
 	var new_node: Node3D = null
 	var ext := path.get_extension().to_lower()
@@ -12,6 +12,15 @@ static func import_from_path(path: String) -> Node3D:
 		var state := GLTFState.new()
 		if doc.append_from_file(path, state) == OK:
 			new_node = doc.generate_scene(state)
+	
+	# Custom runtime OBJ support
+	elif ext == "obj":
+		var mesh := OBJLoader.load_from_file(path)
+		if mesh:
+			var instance := MeshInstance3D.new()
+			instance.mesh = mesh
+			new_node = instance
+	
 	# Support for Godot project-internal files (res://)
 	elif path.begins_with("res://"):
 		var res = ResourceLoader.load(path)
