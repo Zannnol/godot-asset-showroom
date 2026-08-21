@@ -8,6 +8,8 @@
 
 An internal desktop utility built with **Godot 4** designed for 3D artists and technical artists. It provides a standalone, portable environment to quickly load, inspect, and evaluate 3D models, materials, and post-processing shaders without requiring any knowledge of the Godot Engine interface.
 
+<img width="100%" align="center" alt="Godot-asset-viewer-demo" src="https://github.com/user-attachments/assets/89f32491-be8c-48c2-ae54-13b8fda4b5d3" />
+
 ---
 
 ## Wiki & Documentation
@@ -48,8 +50,8 @@ For detailed user guides, technical architecture details, and troubleshooting, v
 - [x] Automatic mesh recentering, bottom-Y pedestal alignment, and camera auto-framing
 - [x] Real-time mesh info & stats overlay (triangles, vertices, surfaces, size)
 - [x] Windows portable builds
-- [x] Linux portable builds *(Built, pending community testing)*
-- [x] macOS portable builds *(Built, pending community testing)*
+- [x] Linux portable builds *(Built, pending testing)*
+- [x] macOS portable builds *(Built, pending testing)*
 
 ### In Development / Planned
 - [ ] OBJ importer support (`#12`)
