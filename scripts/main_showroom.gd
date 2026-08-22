@@ -55,13 +55,10 @@ func _frame_asset(node: Node3D) -> void:
 				combined_aabb = combined_aabb.merge(mesh_aabb)
 
 	if has_mesh:
-		# Visée sur le centre vertical du modèle (mi-hauteur)
-		var focus_center := Vector3(0, combined_aabb.size.y * 0.5, 0)
-		
-		# Calcul de la distance idéale basée sur la plus grande dimension
-		var max_dim := maxf(combined_aabb.size.x, maxf(combined_aabb.size.y, combined_aabb.size.z))
-		var ideal_distance := max_dim * 2.2
-
-		# Transmet les valeurs à orbit_camera.gd via focus_on()
-		if camera_3d.has_method("focus_on"):
-			camera_3d.focus_on(focus_center, ideal_distance)
+		# If the camera has `focus_on_aabb`, we dynamically adjust the bounds and distance
+		if camera_3d.has_method("focus_on_aabb"):
+			camera_3d.focus_on_aabb(combined_aabb)
+		elif camera_3d.has_method("focus_on"):
+			var focus_center := Vector3(0, combined_aabb.size.y * 0.5, 0)
+			var max_dim := maxf(combined_aabb.size.x, maxf(combined_aabb.size.y, combined_aabb.size.z))
+			camera_3d.focus_on(focus_center, max_dim * 2.2)
