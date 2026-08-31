@@ -8,24 +8,33 @@ extends Control
 @export var directional_light: DirectionalLight3D
 
 # References to UI elements
-@onready var check_pedestal: CheckBox = $Sidebar/Content/CheckPedestal
-@onready var check_spheres: CheckBox = $Sidebar/Content/CheckSpheres
+@onready var check_pedestal: CheckBox = $LeftSidebar/Content/CheckPedestal
+@onready var check_spheres: CheckBox = $LeftSidebar/Content/CheckSpheres
 
-@onready var label_hdri: Label = $Sidebar/Content/LabelHDRI
-@onready var slider_hdri: HSlider = $Sidebar/Content/SliderHDRI
+@onready var label_hdri: Label = $LeftSidebar/Content/LabelHDRI
+@onready var slider_hdri: HSlider = $LeftSidebar/Content/SliderHDRI
 
-@onready var label_light_energy: Label = $Sidebar/Content/LabelLightEnergy
-@onready var slider_light_energy: HSlider = $Sidebar/Content/SliderLightEnergy
+@onready var label_light_energy: Label = $LeftSidebar/Content/LabelLightEnergy
+@onready var slider_light_energy: HSlider = $LeftSidebar/Content/SliderLightEnergy
 
-@onready var label_light_temp: Label = $Sidebar/Content/LabelLightTemp
-@onready var slider_light_temp: HSlider = $Sidebar/Content/SliderLightTemp
+@onready var label_light_temp: Label = $LeftSidebar/Content/LabelLightTemp
+@onready var slider_light_temp: HSlider = $LeftSidebar/Content/SliderLightTemp
 
 # References to UI elements StatsPanel
-@onready var label_name: Label = $StatsPanel/Content/LabelName
-@onready var label_triangles: Label = $StatsPanel/Content/LabelTriangles
-@onready var label_vertices: Label = $StatsPanel/Content/LabelVertices
-@onready var label_surfaces: Label = $StatsPanel/Content/LabelSurfaces
-@onready var label_dimensions: Label = $StatsPanel/Content/LabelDimensions
+@onready var label_name: Label = $RightSidebar/VBoxContainer/StatsPanel/Content/LabelName
+@onready var label_triangles: Label = $RightSidebar/VBoxContainer/StatsPanel/Content/LabelTriangles
+@onready var label_vertices: Label = $RightSidebar/VBoxContainer/StatsPanel/Content/LabelVertices
+@onready var label_surfaces: Label = $RightSidebar/VBoxContainer/StatsPanel/Content/LabelSurfaces
+@onready var label_dimensions: Label = $RightSidebar/VBoxContainer/StatsPanel/Content/LabelDimensions
+
+# References to UI elements UVPanel
+@onready var btn_expand: Button = $RightSidebar/VBoxContainer/UVPanel/Content/HeaderContainer/BtnExpand
+@onready var uv_texture_rect: TextureRect = $RightSidebar/VBoxContainer/UVPanel/Content/UVTextureRect
+
+# References to UI elements UVModalWindow
+@onready var uv_modal: Control = $UVModalWindow
+@onready var large_uv_texture_rect: TextureRect = $UVModalWindow/Content/LargeUVTextureRect
+@onready var btn_close_modal: Button = $UVModalWindow/Content/BtnClose
 
 func _ready() -> void:
 	# Connecting visibility signals
@@ -45,6 +54,10 @@ func _ready() -> void:
 	# Check if there's an object already on the scene
 	if asset_pivot:
 		update_asset_info(asset_pivot)
+	
+	# Expand and close UV layout
+	btn_expand.pressed.connect(_on_expand_uv_pressed)
+	btn_close_modal.pressed.connect(_on_close_modal_pressed)
 
 func _on_pedestal_toggled(toggled_on: bool) -> void:
 	if pedestal:
@@ -174,6 +187,16 @@ func update_asset_info(target_node: Node3D) -> void:
 	
 	var bounds_size := combined_aabb.size
 	label_dimensions.text = "Size: %.2fm x %.2fm x %.2fm" % [bounds_size.x, bounds_size.y, bounds_size.z]
+	
+	# Generate and assign UV texture
+	uv_texture_rect.texture = null
+	if not mesh_nodes.is_empty():
+		var uv_bg_color := Color(0.1, 0.1, 0.1, 1.0)
+		var uv_line_color := Color(1.0, 1.0, 1.0, 0.35)
+		
+		var uv_tex = await UVGenerator.generate_uv_texture(mesh_nodes, Vector2i(512, 512), uv_bg_color, uv_line_color)
+		if uv_tex is Texture2D:
+			uv_texture_rect.texture = uv_tex
 
 # Formats large numbers with " ' " (e.g. 12'450)
 func _format_number(number: int) -> String:
@@ -186,3 +209,18 @@ func _format_number(number: int) -> String:
 		formatted = string[i] + formatted
 		count += 1
 	return formatted
+
+# ---------------- UV panel functions ---------------------
+func _on_expand_uv_pressed() -> void:
+	if uv_texture_rect.texture != null:
+		large_uv_texture_rect.texture = uv_texture_rect.texture
+		uv_modal.show()
+
+func _on_close_modal_pressed() -> void:
+	uv_modal.hide()
+
+# Close the modal window with "Esc" key
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel") and uv_modal.visible:
+		uv_modal.hide()
+		get_viewport().set_input_as_handled()
