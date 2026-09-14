@@ -1,5 +1,8 @@
 extends Control
 
+# Signal to main_showroom.gd when a shader is selected
+signal shader_override_changed(shader_id: int)
+
 # References to the scene’s 3D nodes
 @export var pedestal: Node3D
 @export var asset_pivot: Node3D
@@ -31,6 +34,9 @@ extends Control
 @onready var btn_expand: Button = $RightSidebar/VBoxContainer/UVPanel/Content/HeaderContainer/BtnExpand
 @onready var uv_texture_rect: TextureRect = $RightSidebar/VBoxContainer/UVPanel/Content/UVTextureRect
 
+# References to UI elements MaterialPanel
+@onready var option_shader: OptionButton = $RightSidebar/VBoxContainer/MaterialPanel/Content/OptionButton
+
 # References to UI elements UVModalWindow
 @onready var uv_modal: Control = $UVModalWindow
 @onready var large_uv_texture_rect: TextureRect = $UVModalWindow/Content/LargeUVTextureRect
@@ -54,6 +60,9 @@ func _ready() -> void:
 	# Check if there's an object already on the scene
 	if asset_pivot:
 		update_asset_info(asset_pivot)
+	
+	# Setup the ShaderMat
+	_setup_shader_options()
 	
 	# Expand and close UV layout
 	btn_expand.pressed.connect(_on_expand_uv_pressed)
@@ -163,7 +172,8 @@ func update_asset_info(target_node: Node3D) -> void:
 				total_triangles += int(vertices.size() / 3.0)
 
 		# Calculating the size of the object (Bounding Box)
-		var mesh_aabb := instance.get_aabb()
+		# Transforms the local AABB into the target node's space
+		var mesh_aabb := instance.transform * instance.get_aabb()
 		if not has_mesh:
 			combined_aabb = mesh_aabb
 			has_mesh = true
@@ -209,6 +219,25 @@ func _format_number(number: int) -> String:
 		formatted = string[i] + formatted
 		count += 1
 	return formatted
+
+# ---------------- UV panel functions ---------------------
+## Initializes the list of shaders in the OptionButton
+func _setup_shader_options() -> void:
+	# Selects the first option by default
+	option_shader.select(0)
+	# Connects the native OptionButton signal if not already connected
+	if not option_shader.item_selected.is_connected(_on_shader_item_selected):
+		option_shader.item_selected.connect(_on_shader_item_selected)
+
+## Callback triggered when the user changes an option
+func _on_shader_item_selected(index: int) -> void:
+	var selected_id: int = option_shader.get_item_id(index)
+	shader_override_changed.emit(selected_id)
+
+## Utility method to be called when loading a new asset
+func reset_shader_selection() -> void:
+	option_shader.select(0)
+	shader_override_changed.emit(0)
 
 # ---------------- UV panel functions ---------------------
 func _on_expand_uv_pressed() -> void:
