@@ -23,6 +23,20 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_gxkro"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_rx6hd"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_7hcbs"]
+
+[sub_resource type="MeshTexture" id="MeshTexture_enf0a"]
+
+[sub_resource type="DPITexture" id="DPITexture_to8qf"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_gxkro"]
+font_size = 9
+font_color = Color(0.838148, 0.11366191, 2.8878452e-07, 1)
+
 [node name="UI_Overlay" type="Control" unique_id=1555027313]
 layout_mode = 3
 anchors_preset = 15
@@ -168,6 +182,45 @@ text = "Size: 0 x 0 x 0 m"
 [node name="ControlSpacer" type="Control" parent="RightSidebar/VBoxContainer" unique_id=1934970967]
 layout_mode = 2
 
+[node name="MaterialPanel" type="PanelContainer" parent="RightSidebar/VBoxContainer" unique_id=1141457366]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_rx6hd")
+
+[node name="Content" type="VBoxContainer" parent="RightSidebar/VBoxContainer/MaterialPanel" unique_id=377325908]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="RightSidebar/VBoxContainer/MaterialPanel/Content" unique_id=1485151263]
+layout_mode = 2
+text = "Material / Shader"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="RightSidebar/VBoxContainer/MaterialPanel/Content" unique_id=67155382]
+layout_mode = 2
+
+[node name="OptionButton" type="OptionButton" parent="RightSidebar/VBoxContainer/MaterialPanel/Content" unique_id=2002526215]
+layout_mode = 2
+selected = 0
+item_count = 5
+popup/item_0/text = "Default (PBR Textures)"
+popup/item_0/icon = SubResource("PlaceholderTexture2D_gxkro")
+popup/item_0/id = 0
+popup/item_1/text = "UV Checker (Texel density)"
+popup/item_1/icon = SubResource("CompressedTexture2D_rx6hd")
+popup/item_1/id = 1
+popup/item_2/text = "World Normals"
+popup/item_2/icon = SubResource("PlaceholderTexture2D_7hcbs")
+popup/item_2/id = 2
+popup/item_3/text = "Wireframe"
+popup/item_3/icon = SubResource("MeshTexture_enf0a")
+popup/item_3/id = 3
+popup/item_4/text = "MatCap / Clay"
+popup/item_4/icon = SubResource("DPITexture_to8qf")
+popup/item_4/id = 4
+
+[node name="ControlSpacer2" type="Control" parent="RightSidebar/VBoxContainer" unique_id=164832460]
+layout_mode = 2
+
 [node name="UVPanel" type="PanelContainer" parent="RightSidebar/VBoxContainer" unique_id=338274691]
 layout_mode = 2
 mouse_filter = 2
@@ -199,6 +252,12 @@ custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 expand_mode = 3
 stretch_mode = 5
+
+[node name="Label" type="Label" parent="RightSidebar/VBoxContainer/UVPanel/Content" unique_id=1856652439]
+layout_mode = 2
+text = "If there are more than 1 UV map on the object it wil be stacked, will be patched."
+label_settings = SubResource("LabelSettings_gxkro")
+autowrap_mode = 3
 
 [node name="UVModalWindow" type="Control" parent="." unique_id=509775721]
 visible = false
