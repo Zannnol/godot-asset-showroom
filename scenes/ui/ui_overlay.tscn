@@ -23,16 +23,6 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_gxkro"]
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_rx6hd"]
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_7hcbs"]
-
-[sub_resource type="MeshTexture" id="MeshTexture_enf0a"]
-
-[sub_resource type="DPITexture" id="DPITexture_to8qf"]
-
 [sub_resource type="LabelSettings" id="LabelSettings_gxkro"]
 font_size = 9
 font_color = Color(0.838148, 0.11366191, 2.8878452e-07, 1)
@@ -203,19 +193,14 @@ layout_mode = 2
 selected = 0
 item_count = 5
 popup/item_0/text = "Default (PBR Textures)"
-popup/item_0/icon = SubResource("PlaceholderTexture2D_gxkro")
 popup/item_0/id = 0
 popup/item_1/text = "UV Checker (Texel density)"
-popup/item_1/icon = SubResource("CompressedTexture2D_rx6hd")
 popup/item_1/id = 1
 popup/item_2/text = "World Normals"
-popup/item_2/icon = SubResource("PlaceholderTexture2D_7hcbs")
 popup/item_2/id = 2
 popup/item_3/text = "Wireframe"
-popup/item_3/icon = SubResource("MeshTexture_enf0a")
 popup/item_3/id = 3
 popup/item_4/text = "MatCap / Clay"
-popup/item_4/icon = SubResource("DPITexture_to8qf")
 popup/item_4/id = 4
 
 [node name="ControlSpacer2" type="Control" parent="RightSidebar/VBoxContainer" unique_id=164832460]
