@@ -232,6 +232,9 @@ flat = true
 [node name="HSeparator" type="HSeparator" parent="RightSidebar/VBoxContainer/UVPanel/Content" unique_id=693947635]
 layout_mode = 2
 
+[node name="UVSurfaceSelector" type="OptionButton" parent="RightSidebar/VBoxContainer/UVPanel/Content" unique_id=1950817719]
+layout_mode = 2
+
 [node name="UVTextureRect" type="TextureRect" parent="RightSidebar/VBoxContainer/UVPanel/Content" unique_id=1840317192]
 custom_minimum_size = Vector2(200, 200)
 layout_mode = 2

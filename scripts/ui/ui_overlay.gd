@@ -32,6 +32,7 @@ signal shader_override_changed(shader_id: int)
 
 # References to UI elements UVPanel
 @onready var btn_expand: Button = $RightSidebar/VBoxContainer/UVPanel/Content/HeaderContainer/BtnExpand
+@onready var option_uv_surface: OptionButton = $RightSidebar/VBoxContainer/UVPanel/Content/UVSurfaceSelector
 @onready var uv_texture_rect: TextureRect = $RightSidebar/VBoxContainer/UVPanel/Content/UVTextureRect
 
 # References to UI elements MaterialPanel
@@ -63,6 +64,9 @@ func _ready() -> void:
 	
 	# Setup the ShaderMat
 	_setup_shader_options()
+	
+	# Setup UV Selector
+	_setup_uv_selector()
 	
 	# Expand and close UV layout
 	btn_expand.pressed.connect(_on_expand_uv_pressed)
@@ -132,7 +136,7 @@ func kelvin_to_rgb(k: float) -> Color:
 
 	return Color(red / 255.0, green / 255.0, blue / 255.0)
 
-# ---------------- Stats panel functions ---------------------
+# ---------------- Stats panel & UV functions ---------------------
 # Function called each time a new object is loaded onto the base
 func update_asset_info(target_node: Node3D) -> void:
 	if not target_node:
@@ -198,15 +202,33 @@ func update_asset_info(target_node: Node3D) -> void:
 	var bounds_size := combined_aabb.size
 	label_dimensions.text = "Size: %.2fm x %.2fm x %.2fm" % [bounds_size.x, bounds_size.y, bounds_size.z]
 	
-	# Generate and assign UV texture
+	# Clear previous UV textures
 	uv_texture_rect.texture = null
+	option_uv_surface.clear()
+	
 	if not mesh_nodes.is_empty():
 		var uv_bg_color := Color(0.1, 0.1, 0.1, 1.0)
 		var uv_line_color := Color(1.0, 1.0, 1.0, 0.35)
 		
-		var uv_tex = await UVGenerator.generate_uv_texture(mesh_nodes, Vector2i(512, 512), uv_bg_color, uv_line_color)
-		if uv_tex is Texture2D:
-			uv_texture_rect.texture = uv_tex
+		# 1. Generate combined UV texture (All surfaces)
+		var combined_uv: Texture2D = await UVGenerator.generate_uv_texture(mesh_nodes, Vector2i(512, 512), uv_bg_color, uv_line_color)
+		
+		# 2. Generate individual surface UV textures
+		var surface_data: Dictionary = await UVGenerator.generate_surface_uv_textures(target_node, Vector2i(512, 512), uv_bg_color, uv_line_color)
+		
+		# Populate OptionButton
+		option_uv_surface.add_item("All Surfaces (Combined)")
+		option_uv_surface.set_item_metadata(0, combined_uv)
+		
+		var surface_names: Array[String] = surface_data.get("names", [])
+		var surface_textures: Array[Texture2D] = surface_data.get("textures", [])
+		
+		for i in range(surface_textures.size()):
+			option_uv_surface.add_item(surface_names[i])
+			option_uv_surface.set_item_metadata(i + 1, surface_textures[i])
+			
+		option_uv_surface.select(0)
+		_on_uv_surface_selected(0)
 
 # Formats large numbers with " ' " (e.g. 12'450)
 func _format_number(number: int) -> String:
@@ -220,7 +242,7 @@ func _format_number(number: int) -> String:
 		count += 1
 	return formatted
 
-# ---------------- UV panel functions ---------------------
+# ---------------- Material & UV panel functions ---------------------
 ## Initializes the list of shaders in the OptionButton
 func _setup_shader_options() -> void:
 	# Selects the first option by default
@@ -239,7 +261,17 @@ func reset_shader_selection() -> void:
 	option_shader.select(0)
 	shader_override_changed.emit(0)
 
-# ---------------- UV panel functions ---------------------
+func _setup_uv_selector() -> void:
+	if option_uv_surface and not option_uv_surface.item_selected.is_connected(_on_uv_surface_selected):
+		option_uv_surface.item_selected.connect(_on_uv_surface_selected)
+
+func _on_uv_surface_selected(index: int) -> void:
+	var tex := option_uv_surface.get_item_metadata(index) as Texture2D
+	uv_texture_rect.texture = tex
+	if uv_modal.visible:
+		large_uv_texture_rect.texture = tex
+
+# ---------------- Modal Window functions ---------------------
 func _on_expand_uv_pressed() -> void:
 	if uv_texture_rect.texture != null:
 		large_uv_texture_rect.texture = uv_texture_rect.texture

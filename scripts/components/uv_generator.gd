@@ -32,13 +32,8 @@ static func generate_uv_texture(
 	viewport.size = resolution
 	viewport.render_target_clear_mode = SubViewport.CLEAR_MODE_ALWAYS
 	viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
-	viewport.transparent_bg = false
+	viewport.transparent_bg = (background_color.a < 1.0)
 	viewport.world_3d = World3D.new()
-	#Apply the background color if it is transparent; otherwise, use an opaque background
-	if background_color.a < 1.0:
-		viewport.transparent_bg = true
-	else:
-		viewport.transparent_bg = false
 	
 	# Creating an orthographic camera to capture the 2D plane [-1, 1]
 	var camera := Camera3D.new()
@@ -50,7 +45,7 @@ static func generate_uv_texture(
 	# 2. Preparing the shader material
 	var shader := load("res://shaders/production/uv_renderer.gdshader") as Shader
 	if not shader:
-		push_error("UVGenerator: Unable to load the shader at the location res://shaders/production/uv_renderer.gdshader")
+		push_error("UVGenerator: Unable to load shader res://shaders/production/uv_renderer.gdshader")
 		viewport.queue_free()
 		return null
 
@@ -86,3 +81,58 @@ static func generate_uv_texture(
 	viewport.queue_free()
 
 	return texture
+
+
+## Generates an array of textures and names, one for each individual surface/sub-mesh.
+static func generate_surface_uv_textures(
+	node: Node,
+	resolution: Vector2i = Vector2i(512, 512),
+	background_color: Color = Color(0.1, 0.1, 0.1, 1.0),
+	line_color: Color = Color.WHITE
+) -> Dictionary:
+	var result := {
+		"names": [] as Array[String],
+		"textures": [] as Array[Texture2D]
+	}
+
+	var mesh_nodes := node.find_children("*", "MeshInstance3D", true, false)
+	if node is MeshInstance3D:
+		mesh_nodes.append(node)
+
+	for mesh_node in mesh_nodes:
+		var instance := mesh_node as MeshInstance3D
+		if not instance or not instance.mesh:
+			continue
+
+		var mesh := instance.mesh
+		for surface_idx in range(mesh.get_surface_count()):
+			# Extracting a Single Surface
+			var single_surface_mesh := _extract_single_surface(mesh, surface_idx)
+			if not single_surface_mesh:
+				continue
+
+			# Explicit String typing for the surface name
+			var surf_name: String = mesh.surface_get_name(surface_idx)
+			if surf_name.is_empty():
+				surf_name = "%s (Surf %d)" % [instance.name, surface_idx + 1]
+
+			var tex: Texture2D = await generate_uv_texture(single_surface_mesh, resolution, background_color, line_color)
+			if tex:
+				(result["names"] as Array[String]).append(surf_name)
+				(result["textures"] as Array[Texture2D]).append(tex)
+
+	return result
+
+
+## Isolates a single surface in a temporary ArrayMesh
+static func _extract_single_surface(mesh: Mesh, surface_idx: int) -> ArrayMesh:
+	var arrays: Array = mesh.surface_get_arrays(surface_idx)
+	if arrays.is_empty():
+		return null
+
+	var single_mesh := ArrayMesh.new()
+	var primitive_type: Mesh.PrimitiveType = mesh.surface_get_primitive_type(surface_idx)
+	var format: int = mesh.surface_get_format(surface_idx)
+
+	single_mesh.add_surface_from_arrays(primitive_type, arrays, [], {}, format)
+	return single_mesh
