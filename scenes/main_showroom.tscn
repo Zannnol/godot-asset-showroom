@@ -26,41 +26,64 @@ albedo_color = Color(0.20152658, 0.20152658, 0.20152658, 1)
 
 [node name="MainShowroom" type="Node3D" unique_id=1825966714 node_paths=PackedStringArray("asset_pivot", "ui_overlay", "camera_3d")]
 script = ExtResource("1_7h1gp")
-asset_pivot = NodePath("Stage/AssetPivot")
+asset_pivot = NodePath("SubViewportContainer/SubViewport/Stage/AssetPivot")
 ui_overlay = NodePath("UI/UI_Overlay")
-camera_3d = NodePath("Camera3D")
+camera_3d = NodePath("SubViewportContainer/SubViewport/Camera3D")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=923583119]
+[node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=242893813]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=1510506056]
+handle_input_locally = false
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport" unique_id=362551001]
+transform = Transform3D(1, 0, 0, 0, 0.9848078, 0.17364818, 0, -0.17364818, 0.9848078, 0, 1.8, 6.5)
+fov = 45.0
+script = ExtResource("2_2svhk")
+
+[node name="ReferenceSpheres" parent="SubViewportContainer/SubViewport/Camera3D" unique_id=1851797313 instance=ExtResource("2_khcb3")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 1.1, -0.65, -2)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport" unique_id=923583119]
 environment = SubResource("Environment_khcb3")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1498186761]
-transform = Transform3D(0.81915206, 0.4055798, -0.4055798, 0, 0.70710677, 0.70710677, 0.57357645, -0.579228, 0.579228, 0, 3, 0)
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport" unique_id=1498186761]
+transform = Transform3D(0.81915206, 0.4055798, -0.40557978, 0, 0.70710677, 0.7071068, 0.57357645, -0.579228, 0.5792279, 0, 3, 0)
 light_energy = 1.5
 shadow_enabled = true
 
-[node name="Stage" type="Node3D" parent="." unique_id=1930391981]
+[node name="Stage" type="Node3D" parent="SubViewportContainer/SubViewport" unique_id=1930391981]
 
-[node name="Pedestal" type="MeshInstance3D" parent="Stage" unique_id=13950988]
+[node name="Pedestal" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Stage" unique_id=13950988]
 transform = Transform3D(1.75, 0, 0, 0, 0.05, 0, 0, 0, 1.75, 0, 0, 0)
 mesh = SubResource("CylinderMesh_7of6v")
 surface_material_override/0 = SubResource("StandardMaterial3D_2svhk")
 
-[node name="AssetPivot" type="Marker3D" parent="Stage" unique_id=884458130]
+[node name="AssetPivot" type="Marker3D" parent="SubViewportContainer/SubViewport/Stage" unique_id=884458130]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=362551001]
-transform = Transform3D(1, 0, 0, 0, 0.98480767, 0.17364816, 0, -0.17364816, 0.98480767, 0, 1.8, 6.5)
-fov = 45.0
-script = ExtResource("2_2svhk")
-
-[node name="ReferenceSpheres" parent="Camera3D" unique_id=1851797313 instance=ExtResource("2_khcb3")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 1.1, -0.65, -2)
+[node name="CameraShaderRect" type="ColorRect" parent="SubViewportContainer/SubViewport" unique_id=2051657427]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0)
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=240903932]
 
-[node name="UI_Overlay" parent="UI" unique_id=1555027313 node_paths=PackedStringArray("pedestal", "asset_pivot", "reference_spheres", "world_environment", "directional_light") instance=ExtResource("3_q7tv1")]
-pedestal = NodePath("../../Stage/Pedestal")
-asset_pivot = NodePath("../../Stage/AssetPivot")
-reference_spheres = NodePath("../../Camera3D/ReferenceSpheres")
-world_environment = NodePath("../../WorldEnvironment")
-directional_light = NodePath("../../DirectionalLight3D")
+[node name="UI_Overlay" parent="UI" unique_id=1555027313 node_paths=PackedStringArray("pedestal", "asset_pivot", "reference_spheres", "world_environment", "directional_light", "camera_shader_rect") instance=ExtResource("3_q7tv1")]
+pedestal = NodePath("../../SubViewportContainer/SubViewport/Stage/Pedestal")
+asset_pivot = NodePath("../../SubViewportContainer/SubViewport/Stage/AssetPivot")
+reference_spheres = NodePath("../../SubViewportContainer/SubViewport/Camera3D/ReferenceSpheres")
+world_environment = NodePath("../../SubViewportContainer/SubViewport/WorldEnvironment")
+directional_light = NodePath("../../SubViewportContainer/SubViewport/DirectionalLight3D")
+camera_shader_rect = NodePath("../../SubViewportContainer/SubViewport/CameraShaderRect")
