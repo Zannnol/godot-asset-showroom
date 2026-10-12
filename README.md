@@ -53,9 +53,9 @@ For detailed user guides, technical architecture details, and troubleshooting, v
 - [x] Linux portable builds *(Built, pending testing)*
 - [x] macOS portable builds *(Built, pending testing)*
 - [x] OBJ importer support (`#12`)
+- [x] UV & Surface inspection views (`#9`, `#11`)
 
 ### In Development / Planned
-- [ ] UV & Surface inspection views (`#9`, `#11`)
 - [ ] Custom HDRI switching and rotation (`#15`, `#19`)
 - [ ] Custom light direction / rotation (`#20`)
 - [ ] Viewport camera reset (`#21`)
