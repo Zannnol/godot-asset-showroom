@@ -23,10 +23,6 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="LabelSettings" id="LabelSettings_gxkro"]
-font_size = 9
-font_color = Color(0.838148, 0.11366191, 2.8878452e-07, 1)
-
 [node name="UI_Overlay" type="Control" unique_id=1555027313]
 layout_mode = 3
 anchors_preset = 15
@@ -272,12 +268,6 @@ custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 expand_mode = 3
 stretch_mode = 5
-
-[node name="Label" type="Label" parent="RightSidebar/VBoxContainer/UVPanel/Content" unique_id=1856652439]
-layout_mode = 2
-text = "If there are more than 1 UV map on the object it wil be stacked, will be patched."
-label_settings = SubResource("LabelSettings_gxkro")
-autowrap_mode = 3
 
 [node name="UVModalWindow" type="Control" parent="." unique_id=509775721]
 visible = false
