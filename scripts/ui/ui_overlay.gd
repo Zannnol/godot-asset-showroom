@@ -49,6 +49,7 @@ signal shader_override_changed(shader_id: int)
 @onready var shader_option_button: OptionButton = $LeftSidebar/Content/ShaderOptionButton
 @onready var shader_params_container: VBoxContainer = $LeftSidebar/Content/ShaderParamsContainer
 @onready var btn_new_shader: Button = $LeftSidebar/Content/HBoxContainer/BtnNewShader
+@onready var btn_edit_shader: Button = $LeftSidebar/Content/HBoxContainer/BtnEditShader
 @onready var btn_import_shader: Button = $LeftSidebar/Content/HBoxContainer/BtnImportShader
 
 # Dynamically store loaded shaders
@@ -85,6 +86,10 @@ func _ready() -> void:
 	# Expand and close UV layout
 	btn_expand.pressed.connect(_on_expand_uv_pressed)
 	btn_close_modal.pressed.connect(_on_close_modal_pressed)
+	
+	# Edit actual shader
+	if btn_edit_shader:
+		btn_edit_shader.pressed.connect(_on_edit_shader_pressed)
 
 func _on_pedestal_toggled(toggled_on: bool) -> void:
 	if pedestal:
@@ -468,3 +473,84 @@ func _generate_shader_controls(code: String, material: ShaderMaterial) -> void:
 			hbox.add_child(slider)
 			
 		shader_params_container.add_child(hbox)
+
+# Opens a window to edit the active shader
+func _on_edit_shader_pressed() -> void:
+	var current_index = shader_option_button.selected
+	if current_index <= 0:
+		return # Nothing to edit if “Disabled” is selected
+		
+	var shader := shader_option_button.get_item_metadata(current_index) as Shader
+	if not shader:
+		return
+
+	# Creating an Edit Modal Window
+	var window := Window.new()
+	window.title = "Edit Shader Code"
+	window.size = Vector2i(750, 550)
+	window.initial_position = Window.WINDOW_INITIAL_POSITION_CENTER_PRIMARY_SCREEN
+	window.transient = true
+	
+	var vbox := VBoxContainer.new()
+	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 10)
+	window.add_child(vbox)
+	
+	# Rich-text field for code (CodeEdit)
+	var code_edit := CodeEdit.new()
+	code_edit.text = shader.code
+	code_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	code_edit.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	code_edit.gutters_draw_line_numbers = true
+	
+	# Configuring Syntax Highlighting for Shaders
+	var highlighter = CodeHighlighter.new()
+	
+	# Base colors
+	highlighter.number_color = Color(0.7, 0.9, 1.0)
+	highlighter.symbol_color = Color(0.8, 0.8, 0.8)
+	highlighter.function_color = Color(0.6, 0.8, 1.0)
+	
+	highlighter.add_color_region("//", "", Color(0.5, 0.6, 0.5), true)
+	
+	# Main keywords
+	var keywords = [
+		"shader_type", "uniform", "group_uniforms", "varying", "const",
+		"void", "return", "if", "else", "for", "while", "break", "continue"
+	]
+	for kw in keywords:
+		highlighter.add_keyword_color(kw, Color(1.0, 0.45, 0.55))
+		
+	# Data Types and Swizzles (without a period, so they're recognized everywhere)
+	var types = [
+		"float", "int", "bool", "vec2", "vec3", "vec4", 
+		"mat2", "mat3", "mat4", "sampler2D", "sampler3D",
+		"rgb", "rgba", "xyz", "xyzw", "x", "y", "z", "w", "r", "g", "b", "a"
+	]
+	for t in types:
+		highlighter.add_keyword_color(t, Color(0.4, 0.9, 0.6))
+		
+	code_edit.syntax_highlighter = highlighter
+	vbox.add_child(code_edit)
+	
+	# Apply the theme to normal text
+	var theme = Theme.new()
+	theme.set_color("font_color", "CodeEdit", Color(0.9, 0.9, 0.9))
+	code_edit.theme = theme
+	
+	# Save / Apply button
+	var btn_save := Button.new()
+	btn_save.text = "Apply & Save Changes"
+	btn_save.pressed.connect(func():
+		shader.code = code_edit.text
+		# Refresh the shader application and recreate the dynamic controls
+		_on_camera_shader_selected(current_index)
+		window.queue_free()
+	)
+	vbox.add_child(btn_save)
+	
+	window.close_requested.connect(func():
+		window.queue_free()
+	)
+	
+	get_tree().root.add_child(window)
+	window.popup()
