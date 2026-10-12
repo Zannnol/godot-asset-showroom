@@ -10,6 +10,8 @@ signal shader_override_changed(shader_id: int)
 @export var world_environment: WorldEnvironment
 @export var directional_light: DirectionalLight3D
 
+@export var camera_shader_rect: ColorRect
+
 # References to UI elements
 @onready var check_pedestal: CheckBox = $LeftSidebar/Content/CheckPedestal
 @onready var check_spheres: CheckBox = $LeftSidebar/Content/CheckSpheres
@@ -43,6 +45,16 @@ signal shader_override_changed(shader_id: int)
 @onready var large_uv_texture_rect: TextureRect = $UVModalWindow/Content/LargeUVTextureRect
 @onready var btn_close_modal: Button = $UVModalWindow/Content/BtnClose
 
+# References to UI elements CameraShader
+@onready var shader_option_button: OptionButton = $LeftSidebar/Content/ShaderOptionButton
+@onready var shader_params_container: VBoxContainer = $LeftSidebar/Content/ShaderParamsContainer
+@onready var btn_new_shader: Button = $LeftSidebar/Content/HBoxContainer/BtnNewShader
+@onready var btn_edit_shader: Button = $LeftSidebar/Content/HBoxContainer/BtnEditShader
+@onready var btn_import_shader: Button = $LeftSidebar/Content/HBoxContainer/BtnImportShader
+
+# Dynamically store loaded shaders
+var loaded_shaders: Array[Shader] = []
+
 func _ready() -> void:
 	# Connecting visibility signals
 	check_pedestal.toggled.connect(_on_pedestal_toggled)
@@ -68,9 +80,16 @@ func _ready() -> void:
 	# Setup UV Selector
 	_setup_uv_selector()
 	
+	# Setup CameraShader Controls
+	_setup_camera_shader_interface()
+	
 	# Expand and close UV layout
 	btn_expand.pressed.connect(_on_expand_uv_pressed)
 	btn_close_modal.pressed.connect(_on_close_modal_pressed)
+	
+	# Edit actual shader
+	if btn_edit_shader:
+		btn_edit_shader.pressed.connect(_on_edit_shader_pressed)
 
 func _on_pedestal_toggled(toggled_on: bool) -> void:
 	if pedestal:
@@ -285,3 +304,253 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel") and uv_modal.visible:
 		uv_modal.hide()
 		get_viewport().set_input_as_handled()
+
+# ---------------- Camera Shader Functions ---------------------
+# Setup the Camera Shader interface
+func _setup_camera_shader_interface() -> void:
+	shader_option_button.clear()
+	shader_option_button.add_item("Disabled (No Shader)")
+	shader_option_button.set_item_metadata(0, null)
+
+	shader_option_button.item_selected.connect(_on_camera_shader_selected)
+	btn_new_shader.pressed.connect(_on_new_shader_pressed)
+	btn_import_shader.pressed.connect(_on_import_shader_pressed)
+
+# Called on a Shader selection
+func _on_camera_shader_selected(index: int) -> void:
+	if not camera_shader_rect:
+		return
+		
+	# Clear the old parameter settings
+	for child in shader_params_container.get_children():
+		child.queue_free()
+		
+	var shader := shader_option_button.get_item_metadata(index) as Shader
+	if shader == null:
+		camera_shader_rect.material = null
+		camera_shader_rect.visible = false
+		return
+		
+	var mat := ShaderMaterial.new()
+	mat.shader = shader
+	camera_shader_rect.material = mat
+	camera_shader_rect.visible = true
+
+	# Dynamically generate controls based on the shader code
+	_generate_shader_controls(shader.code, mat)
+
+# Create a new default template of a shader
+func _on_new_shader_pressed() -> void:
+	# Create a basic camera shader template
+	var default_code := """
+		shader_type canvas_item;
+		uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
+		
+		group_uniforms Desaturation;
+		uniform float saturation_amount : hint_range(0.0, 1.0) = 0.2;
+		
+		void fragment() {
+			vec4 col = texture(SCREEN_TEXTURE, SCREEN_UV);
+			// Light saturation
+			float gray = dot(col.rgb, vec3(0.299, 0.587, 0.114));
+			col.rgb = mix(col.rgb, vec3(gray), saturation_amount);
+			COLOR = col;
+		}
+		"""
+	var shader := Shader.new()
+	shader.code = default_code
+
+	loaded_shaders.append(shader)
+	var idx = shader_option_button.item_count
+	shader_option_button.add_item("Custom Shader %d" % idx)
+	shader_option_button.set_item_metadata(idx, shader)
+	shader_option_button.select(idx)
+	_on_camera_shader_selected(idx)
+
+# Import external shaders
+func _on_import_shader_pressed() -> void:
+	# Opens a native FileDialog to import a .gdshader file
+	var file_dialog := FileDialog.new()
+	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+	file_dialog.filters = PackedStringArray(["*.gdshader ; Godot Shader Files"])
+	file_dialog.title = "Import Camera Shader"
+
+	file_dialog.file_selected.connect(func(path: String):
+		var code := FileAccess.get_file_as_string(path)
+		if not code.is_empty():
+			var shader := Shader.new()
+			shader.code = code
+
+			loaded_shaders.append(shader)
+			var idx = shader_option_button.item_count
+			var filename = path.get_file().get_basename()
+			shader_option_button.add_item(filename)
+			shader_option_button.set_item_metadata(idx, shader)
+			shader_option_button.select(idx)
+			_on_camera_shader_selected(idx)
+		file_dialog.queue_free()
+	)
+	
+	file_dialog.canceled.connect(func():
+		file_dialog.queue_free()
+	)
+	
+	get_tree().root.add_child(file_dialog)
+	file_dialog.popup_centered_ratio(0.5)
+
+func _generate_shader_controls(code: String, material: ShaderMaterial) -> void:
+	# Regex to capture lines of the following type: uniform float name: hint_range(...) = val;
+	# or uniform vec4 name: source_color = vec4(...);
+	var regex = RegEx.new()
+	regex.compile("uniform\\s+(?<type>\\w+)\\s+(?<name>\\w+)(\\s*:\\s*(?<hint>[^=;]+))?\\s*=\\s*(?<default>[^;]+);")
+
+	var results = regex.search_all(code)
+	for result in results:
+		var p_type = result.get_string("type")
+		var p_name = result.get_string("name")
+		var p_hint = result.get_string("hint")
+		var p_default_str = result.get_string("default").strip_edges()
+
+		# Creating a horizontal container for the label and the control
+		var hbox = HBoxContainer.new()
+		var label = Label.new()
+		label.text = p_name.capitalize()
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		hbox.add_child(label)
+		
+		# Case 1: Color (source_color)
+		if p_type == "vec4" and "source_color" in p_hint:
+			var color_picker = ColorPickerButton.new()
+			color_picker.custom_minimum_size = Vector2(60, 25)
+			
+			var current_color = material.get_shader_parameter(p_name)
+			if current_color is Color:
+				color_picker.color = current_color
+			else:
+				# Parse la valeur par défaut du type vec4(r, g, b, a)
+				if "vec4" in p_default_str:
+					var inner = p_default_str.get_slice("(", 1).get_slice(")", 0)
+					var parts = inner.split(",")
+					if parts.size() >= 3:
+						var col = Color(parts[0].to_float(), parts[1].to_float(), parts[2].to_float(), parts[3].to_float() if parts.size() > 3 else 1.0)
+						color_picker.color = col
+						material.set_shader_parameter(p_name, col) # Initialise la valeur dans le mat
+					else:
+						color_picker.color = Color.WHITE
+				else:
+					color_picker.color = Color.WHITE
+			
+			color_picker.color_changed.connect(func(c: Color):
+				material.set_shader_parameter(p_name, c)
+			)
+			hbox.add_child(color_picker)
+			
+		# Case 2: Floating-point with range (hint_range)
+		elif p_type == "float" and "hint_range" in p_hint:
+			var slider = HSlider.new()
+			slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			
+			var range_regex = RegEx.new()
+			range_regex.compile("hint_range\\s*\\((?<min>[-\\d.]+)\\s*,\\s*(?<max>[-\\d.]+)")
+			var range_match = range_regex.search(p_hint)
+			if range_match:
+				slider.min_value = range_match.get_string("min").to_float()
+				slider.max_value = range_match.get_string("max").to_float()
+				slider.step = 0.001 if (slider.max_value - slider.min_value) < 2.0 else 0.01
+			
+			var current_val = material.get_shader_parameter(p_name)
+			if current_val != null:
+				slider.value = current_val
+			else:
+				var def_val = p_default_str.to_float()
+				slider.value = def_val
+				material.set_shader_parameter(p_name, def_val) # Initialise la valeur dans le mat
+			
+			slider.value_changed.connect(func(val: float):
+				material.set_shader_parameter(p_name, val)
+			)
+			hbox.add_child(slider)
+			
+		shader_params_container.add_child(hbox)
+
+# Opens a window to edit the active shader
+func _on_edit_shader_pressed() -> void:
+	var current_index = shader_option_button.selected
+	if current_index <= 0:
+		return # Nothing to edit if “Disabled” is selected
+		
+	var shader := shader_option_button.get_item_metadata(current_index) as Shader
+	if not shader:
+		return
+
+	# Creating an Edit Modal Window
+	var window := Window.new()
+	window.title = "Edit Shader Code"
+	window.size = Vector2i(750, 550)
+	window.initial_position = Window.WINDOW_INITIAL_POSITION_CENTER_PRIMARY_SCREEN
+	window.transient = true
+	
+	var vbox := VBoxContainer.new()
+	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 10)
+	window.add_child(vbox)
+	
+	# Rich-text field for code (CodeEdit)
+	var code_edit := CodeEdit.new()
+	code_edit.text = shader.code
+	code_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	code_edit.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	code_edit.gutters_draw_line_numbers = true
+	
+	# Configuring Syntax Highlighting for Shaders
+	var highlighter = CodeHighlighter.new()
+	
+	# Base colors
+	highlighter.number_color = Color(0.7, 0.9, 1.0)
+	highlighter.symbol_color = Color(0.8, 0.8, 0.8)
+	highlighter.function_color = Color(0.6, 0.8, 1.0)
+	
+	highlighter.add_color_region("//", "", Color(0.5, 0.6, 0.5), true)
+	
+	# Main keywords
+	var keywords = [
+		"shader_type", "uniform", "group_uniforms", "varying", "const",
+		"void", "return", "if", "else", "for", "while", "break", "continue"
+	]
+	for kw in keywords:
+		highlighter.add_keyword_color(kw, Color(1.0, 0.45, 0.55))
+		
+	# Data Types and Swizzles (without a period, so they're recognized everywhere)
+	var types = [
+		"float", "int", "bool", "vec2", "vec3", "vec4", 
+		"mat2", "mat3", "mat4", "sampler2D", "sampler3D",
+		"rgb", "rgba", "xyz", "xyzw", "x", "y", "z", "w", "r", "g", "b", "a"
+	]
+	for t in types:
+		highlighter.add_keyword_color(t, Color(0.4, 0.9, 0.6))
+		
+	code_edit.syntax_highlighter = highlighter
+	vbox.add_child(code_edit)
+	
+	# Apply the theme to normal text
+	var theme = Theme.new()
+	theme.set_color("font_color", "CodeEdit", Color(0.9, 0.9, 0.9))
+	code_edit.theme = theme
+	
+	# Save / Apply button
+	var btn_save := Button.new()
+	btn_save.text = "Apply & Save Changes"
+	btn_save.pressed.connect(func():
+		shader.code = code_edit.text
+		# Refresh the shader application and recreate the dynamic controls
+		_on_camera_shader_selected(current_index)
+		window.queue_free()
+	)
+	vbox.add_child(btn_save)
+	
+	window.close_requested.connect(func():
+		window.queue_free()
+	)
+	
+	get_tree().root.add_child(window)
+	window.popup()

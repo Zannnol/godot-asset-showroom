@@ -118,6 +118,38 @@ max_value = 40000.0
 step = 100.0
 value = 6500.0
 
+[node name="HSeparator4" type="HSeparator" parent="LeftSidebar/Content" unique_id=61621208]
+layout_mode = 2
+
+[node name="Section4" type="Label" parent="LeftSidebar/Content" unique_id=1236761238]
+layout_mode = 2
+text = "Camera Shader"
+horizontal_alignment = 1
+
+[node name="ShaderOptionButton" type="OptionButton" parent="LeftSidebar/Content" unique_id=894747518]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ShaderParamsContainer" type="VBoxContainer" parent="LeftSidebar/Content" unique_id=1585861656]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="LeftSidebar/Content" unique_id=2096087962]
+layout_mode = 2
+alignment = 1
+
+[node name="BtnNewShader" type="Button" parent="LeftSidebar/Content/HBoxContainer" unique_id=1728551227]
+layout_mode = 2
+text = "+ New"
+
+[node name="BtnEditShader" type="Button" parent="LeftSidebar/Content/HBoxContainer" unique_id=141315812]
+custom_minimum_size = Vector2(65, 0)
+layout_mode = 2
+text = "Edit"
+
+[node name="BtnImportShader" type="Button" parent="LeftSidebar/Content/HBoxContainer" unique_id=994443320]
+layout_mode = 2
+text = "Import..."
+
 [node name="RightSidebar" type="PanelContainer" parent="." unique_id=1180804426]
 layout_mode = 1
 anchors_preset = 11
