@@ -8,7 +8,8 @@
 
 An internal desktop utility built with **Godot 4** designed for 3D artists and technical artists. It provides a standalone, portable environment to quickly load, inspect, and evaluate 3D models, materials, and post-processing shaders without requiring any knowledge of the Godot Engine interface.
 
-<img width="100%" align="center" alt="Godot-asset-viewer-demo" src="https://github.com/user-attachments/assets/89f32491-be8c-48c2-ae54-13b8fda4b5d3" />
+<img width="100%" align="center" alt="Godot-asset-viewer-demo" src="https://github.com/user-attachments/assets/9a0b4f05-4a41-46a8-b6ba-2682393f1566" />
+
 
 ---
 
