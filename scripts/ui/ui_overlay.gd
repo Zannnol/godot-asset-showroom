@@ -3,6 +3,7 @@ extends Control
 # Signal to main_showroom.gd when a shader is selected
 signal shader_override_changed(shader_id: int)
 
+#region SETUP EXPORT and ONREADY
 # References to the scene’s 3D nodes
 @export var pedestal: Node3D
 @export var asset_pivot: Node3D
@@ -52,6 +53,8 @@ signal shader_override_changed(shader_id: int)
 @onready var btn_edit_shader: Button = $LeftSidebar/Content/HBoxContainer/BtnEditShader
 @onready var btn_import_shader: Button = $LeftSidebar/Content/HBoxContainer/BtnImportShader
 @onready var btn_export_shader: Button = $LeftSidebar/Content/HBoxContainer/BtnExportShader
+
+#endregion
 
 # Dynamically store loaded shaders
 var loaded_shaders: Array[Shader] = []
