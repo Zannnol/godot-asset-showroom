@@ -51,6 +51,7 @@ signal shader_override_changed(shader_id: int)
 @onready var btn_new_shader: Button = $LeftSidebar/Content/HBoxContainer/BtnNewShader
 @onready var btn_edit_shader: Button = $LeftSidebar/Content/HBoxContainer/BtnEditShader
 @onready var btn_import_shader: Button = $LeftSidebar/Content/HBoxContainer/BtnImportShader
+@onready var btn_export_shader: Button = $LeftSidebar/Content/HBoxContainer/BtnExportShader
 
 # Dynamically store loaded shaders
 var loaded_shaders: Array[Shader] = []
@@ -315,6 +316,7 @@ func _setup_camera_shader_interface() -> void:
 	shader_option_button.item_selected.connect(_on_camera_shader_selected)
 	btn_new_shader.pressed.connect(_on_new_shader_pressed)
 	btn_import_shader.pressed.connect(_on_import_shader_pressed)
+	btn_export_shader.pressed.connect(_on_export_shader_pressed)
 
 # Called on a Shader selection
 func _on_camera_shader_selected(index: int) -> void:
@@ -389,6 +391,41 @@ func _on_import_shader_pressed() -> void:
 			shader_option_button.set_item_metadata(idx, shader)
 			shader_option_button.select(idx)
 			_on_camera_shader_selected(idx)
+		file_dialog.queue_free()
+	)
+	
+	file_dialog.canceled.connect(func():
+		file_dialog.queue_free()
+	)
+	
+	get_tree().root.add_child(file_dialog)
+	file_dialog.popup_centered_ratio(0.5)
+
+# Export currently selected shader to a .gdshader file
+func _on_export_shader_pressed() -> void:
+	var current_index = shader_option_button.selected
+	if current_index <= 0:
+		return # Nothing to export if “Disabled” is selected
+		
+	var shader := shader_option_button.get_item_metadata(current_index) as Shader
+	if not shader:
+		return
+	
+	# Opens a native FileDialog window in save mode
+	var file_dialog := FileDialog.new()
+	file_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
+	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+	file_dialog.filters = PackedStringArray(["*.gdshader ; Godot Shader Files"])
+	file_dialog.title = "Export Camera Shader"
+	
+	# Suggests a filename based on the current label in the OptionButton
+	file_dialog.current_file = shader_option_button.get_item_text(current_index) + ".gdshader"
+	
+	file_dialog.file_selected.connect(func(path: String):
+		var file := FileAccess.open(path, FileAccess.WRITE)
+		if file:
+			file.store_string(shader.code)
+			file.close()
 		file_dialog.queue_free()
 	)
 	

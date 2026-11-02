@@ -138,13 +138,16 @@ layout_mode = 2
 text = "+ New"
 
 [node name="BtnEditShader" type="Button" parent="LeftSidebar/Content/HBoxContainer" unique_id=141315812]
-custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 text = "Edit"
 
 [node name="BtnImportShader" type="Button" parent="LeftSidebar/Content/HBoxContainer" unique_id=994443320]
 layout_mode = 2
 text = "Import..."
+
+[node name="BtnExportShader" type="Button" parent="LeftSidebar/Content/HBoxContainer" unique_id=448516240]
+layout_mode = 2
+text = "Export"
 
 [node name="RightSidebar" type="PanelContainer" parent="." unique_id=1180804426]
 layout_mode = 1
